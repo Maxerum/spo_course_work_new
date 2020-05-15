@@ -7,6 +7,7 @@
 #include <TCHAR.H>
 #include <tlhelp32.h>
 #include <QMainWindow>
+//#include "computerinfo.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -15,28 +16,37 @@ QT_END_NAMESPACE
 
 using namespace std;
 
+class computerInfo
+{
+    char computer_name[100];
+public:
+    computerInfo();
+    char *get_current_name(){return this->computer_name;}
+    char* get_computer_name(/*Ui::MainWindow *ui*/);//+
+    char *copy(char *buffer){strcpy_s(computer_name,buffer);}
+};
+
+class userInfo{
+public:
+    userInfo();
+    char* get_user_name(/*Ui::MainWindow *ui*/);//+
+};
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-    friend class computerInfo;
     friend class processorInfo;
     friend class osInfo;
     friend class driveInfo;
     friend class memoryInfo;
-    friend class userInfo;
     friend class displayInfo;
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    void full_table();
     void get_information();
-//    void get_process_list();
     void PrintProcessList(HANDLE CONST hStdOut);
     void PrintModuleList(HANDLE hStdOut, DWORD dwProcessId );
     void get_process_list();
-
-/*private slots:
-    void on_tableWidget_cellActivated(int row, int column);*/
 
 private:
     Ui::MainWindow *ui;
@@ -52,7 +62,6 @@ public:
     displayInfo *disp_info;
 private slots:
     void update();
-    //void updateTime();
 };
 
 

@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 
     //QTimer::singleShot(5 * 60 * 1000, &a, SLOT(quit()));
     //w.get_process_list();
-    w.get_information();
+    //w.get_information();
     w.show();
     return a.exec();
 }

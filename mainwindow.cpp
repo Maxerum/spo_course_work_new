@@ -27,14 +27,16 @@ MainWindow::MainWindow(QWidget *parent)
     tmr->setInterval(1000); // Задаем интервал таймера
     connect(tmr, SIGNAL(timeout()), this, SLOT(update())); // Подключаем сигнал таймера к нашему слоту
     tmr->start(); // Запускаем таймер
+    computerInfo *comp_info;
+    char buffer[100];
+    strcpy(buffer,comp_info->get_computer_name());
+    ui->computer_name->setText(buffer);
+    userInfo *user_info;
+    strcpy(buffer,user_info->get_user_name());
+    ui->label_7->setText(buffer);
     get_information();
-    //mt->
 }
 
-/*void MainWindow :: full_table(){
-    ui->tabWidget->clear();
-    ui->tab_2->
-}*/
 
 MainWindow::~MainWindow()
 {
@@ -64,22 +66,20 @@ void driveInfo::get_drive_type(Ui::MainWindow *ui){
             }
             buff[i]='\0';
 
-
-//            std::wcout << szDisk << std::endl;
-
-//            std::wcout << L"Системные флаги диска:\t";
-//            DWORD dwSystemFlags;
-//            GetVolumeInformation(szDisk, NULL, 0, NULL, 0, &dwSystemFlags, NULL, 0);
-//            std::wcout << dwSystemFlags << L"\n";
-
             __int64 uliTotalBytes;
-            GetDiskFreeSpaceEx(szDisk, NULL, (PULARGE_INTEGER)&uliTotalBytes, NULL);
+            __int64 uliFreeBytes;
+            GetDiskFreeSpaceEx(szDisk, (PULARGE_INTEGER)&uliFreeBytes, (PULARGE_INTEGER)&uliTotalBytes, NULL);
             int res = uliTotalBytes/ (1024 * 1024 * 1024);
+            int freeBytes = uliFreeBytes/ (1024 * 1024 * 1024);
             _itoa(res,buf,10);
-
+            //_itoa(freeBytes,buf,10);
             switch(counter){
             case 0:
                 strcat(buff,"\nОбъем диска: ");
+                strcat(buff,buf);
+                strcat(buff," ГБ");
+                strcat(buff,"\nСвободный объем диска: ");
+                _itoa(freeBytes,buf,10);
                 strcat(buff,buf);
                 strcat(buff," ГБ");
                 ui->textBrowser->setText(buff);
@@ -88,10 +88,18 @@ void driveInfo::get_drive_type(Ui::MainWindow *ui){
                 strcat(buff,"\nОбъем диска: ");
                 strcat(buff,buf);
                 strcat(buff," ГБ");
+                strcat(buff,"\nСвободный объем диска: ");
+                _itoa(freeBytes,buf,10);
+                strcat(buff,buf);
+                strcat(buff," ГБ");
                 ui->textBrowser_2->setText(buff);
                 break;
             case 2:
                 strcat(buff,"\nОбъем диска: ");
+                strcat(buff,buf);
+                strcat(buff," ГБ");
+                strcat(buff,"\nСвободный объем диска: ");
+                _itoa(freeBytes,buf,10);
                 strcat(buff,buf);
                 strcat(buff," ГБ");
                 ui->textBrowser_3->setText(buff);
@@ -100,10 +108,18 @@ void driveInfo::get_drive_type(Ui::MainWindow *ui){
                 strcat(buff,"\nОбъем диска: ");
                 strcat(buff,buf);
                 strcat(buff," ГБ");
+                strcat(buff,"\nСвободный объем диска: ");
+                _itoa(freeBytes,buf,10);
+                strcat(buff,buf);
+                strcat(buff," ГБ");
                 ui->textBrowser_4->setText(buff);
                 break;
             case 4:
                 strcat(buff,"\nОбъем диска: ");
+                strcat(buff,buf);
+                strcat(buff," ГБ");
+                strcat(buff,"\nСвободный объем диска: ");
+                _itoa(freeBytes,buf,10);
                 strcat(buff,buf);
                 strcat(buff," ГБ");
                 ui->textBrowser_5->setText(buff);
@@ -112,70 +128,34 @@ void driveInfo::get_drive_type(Ui::MainWindow *ui){
                 strcat(buff,"\nОбъем диска:");
                 strcat(buff,buf);
                 strcat(buff," ГБ");
+                strcat(buff,"\nСвободный объем диска: ");
+                _itoa(freeBytes,buf,10);
+                strcat(buff,buf);
+                strcat(buff," ГБ");
                 ui->textBrowser_6->setText(buff);
                 break;
             }
-//            std::wcout << L"Объем диска:\t" << uliTotalBytes / (1024 * 1024 * 1024) << L" МБ\n";
-//            std::wcout << std::endl;
-        //}
         while (*szLogicalDrives) szLogicalDrives++;
         szLogicalDrives++;
         counter++;
    }
-
-
-
-//    char buff[100];
-//    wchar_t buffer[100];
-//    if (GetDriveType(L"F:")==DRIVE_CDROM)
-//            cout << "CD" << endl;//GetDriveType(buffer);
-//    int i=0;
-//    while(buffer[i]!='\0'){
-//        buff[i] = buffer[i];
-////            sprintf(buff[i],"%c",peProcessEntry.szExeFile[i]);
-//        i++;
-//    }
-//    buff[i] = '\0';
-
-//    ui->label_8->setText(buff);
 }
 
 void MainWindow::get_information()
 {
-    compInfo->get_computer_name(ui);
-    user_info->get_user_name(ui);
+    //compInfo->get_computer_name(ui);
+    //user_info->get_user_name(ui);
     procInfo->get_processor_type(ui);
-    //os_info->get_os_version_name(ui);
+    os_info->get_os_version_name(ui);
     os_info->get_windows_directory(ui);
+    os_info->get_system_directory(ui);
     drive_info->get_drive_type(ui);
-    //drive_info->get_pass_volumes(ui);
-    //drive_info->get_free_space(ui);
     mem_info->get_mem_info(ui);
-   disp_info->get_display_info(ui);
+    procInfo->get_processor_load(ui);
+    disp_info->get_display_info(ui);
 }
 
-void driveInfo:: get_free_space(Ui::MainWindow *ui){
-        DWORD FreeBytesAvailable;
-        DWORD TotalNumberOfBytes;
-        DWORD TotalNumberOfFreeBytes;
 
-        BOOL GetDiskFreeSpaceFlag = GetDiskFreeSpaceEx(
-        L"c:\\",					  // directory name
-        (PULARGE_INTEGER)&FreeBytesAvailable,     // bytes available to caller
-        (PULARGE_INTEGER)&TotalNumberOfBytes,     // bytes on disk
-        (PULARGE_INTEGER)&TotalNumberOfFreeBytes  // free bytes on disk
-        );
-
-        if(GetDiskFreeSpaceFlag != 0)
-        {
-            cout << "	Total Number Of Free Bytes = " << TotalNumberOfFreeBytes << "( " <<  double(long (TotalNumberOfFreeBytes))/1024/1000
-                 << " Mb )" << endl;
-            cout << "	Total Number Of Bytes = " << TotalNumberOfBytes  << "( " << double(long (TotalNumberOfBytes))/1024/1000
-                 << " Mb )" << endl;
-        }
-        else	cout << "	Not Present (GetDiskFreeSpace)" << endl;
-
-}
 
 void displayInfo::get_display_info(Ui::MainWindow *ui){
     int  nWidth, nHeight;
@@ -199,8 +179,7 @@ void displayInfo::get_display_info(Ui::MainWindow *ui){
     frequency = GetDeviceCaps(ScreenDC, VREFRESH);
     _itoa(frequency,sec_buf,10);
     ui->freq->setText(sec_buf);
-
-    setlocale(LC_ALL, "");
+    //    setlocale(LC_ALL, "");
     DISPLAY_DEVICE sDispDev = { 0 };
     sDispDev.cb = sizeof(DISPLAY_DEVICE);
 
@@ -213,28 +192,17 @@ void displayInfo::get_display_info(Ui::MainWindow *ui){
         }
         buf[i]='\0';
         ui->display->setText(buf);
-
-        //printf("Adapter %s", sDispDev.DeviceString);
     }
-    else
-    {
-        cout << "Не удалось найти информацию об адаптере!" << endl;
-        system("\npause");
-        exit(EXIT_FAILURE);
-    }
-//    if (EnumDisplayDevices(NULL, 0, &sDispDev, 0))
-//    {
-//        int i = 0;
-//        while(sDispDev.DeviceString[i]!='\0'){
-//            buf[i] = sDispDev.DeviceString[i];
-//            i++;
-//        }
-//        buf[i]='\0';
-//        ui->label_21->setText(buf);
-//        //printf("Adapter %s", sDispDev.DeviceString);
-//    }
 
     std::wstring devName = sDispDev.DeviceName;
+
+    int i = 0;
+    while(sDispDev.DeviceName[i]!='\0'){
+        buf[i] = sDispDev.DeviceName[i];
+        i++;
+    }
+    buf[i]='\0';
+    ui->label_21->setText(buf);
 
     if (EnumDisplayDevices(devName.c_str(), 0, &sDispDev, 0))
     {
@@ -245,207 +213,143 @@ void displayInfo::get_display_info(Ui::MainWindow *ui){
         }
         buf[i]='\0';
         ui->label_22->setText(buf);
-        //printf("Name %s", sDispDev.DeviceName);
+
     }
-    else
-    {
-        cout << "Не удалось найти информацию о дисплее!" << endl;
-        system("\npause");
-    }
-
-
-
-//    char buffer[250];
-//    DISPLAY_DEVICE  display_device;
-//    ZeroMemory(&display_device, sizeof(display_device));
-//    display_device.cb = sizeof(display_device);
-//    for(int i = 0; EnumDisplayDevices(NULL, i, &display_device, 0); ++i){
-//        cout<<display_device.DeviceName;
-//    }
-////    void GetVideoInfo()
-////    {
-//        setlocale(LC_ALL, "");
-//        DISPLAY_DEVICE sDispDev = { 0 };
-//        sDispDev.cb = sizeof(DISPLAY_DEVICE);
-//        if (EnumDisplayDevices(NULL, 0, &sDispDev, 0))
-//        {
-//            cout << "Адаптер: " << sDispDev.DeviceString << endl;
-//        }
-//        else
-//        {
-//            cout << "Не удалось найти информацию об адаптере!" << endl;
-//            system("\npause");
-//            exit(EXIT_FAILURE);
-//        }
-//        if (EnumDisplayDevices(NULL, 0, &sDispDev, 0))
-//        {
-//            cout << sDispDev.DeviceString << endl;
-//        }
-
-//        std::wstring devName = sDispDev.DeviceName;
-
-//        if (EnumDisplayDevices(devName.c_str(), 0, &sDispDev, 0))
-//        {
-//            cout << sDispDev.DeviceName << endl;
-//        }
-//        else
-//        {
-//            cout << "Не удалось найти информацию о дисплее!" << endl;
-//            system("\npause");
-//        }
-////    }
-
 }
 
-void driveInfo::get_pass_volumes(Ui::MainWindow *ui){
+//void driveInfo::get_pass_volumes(Ui::MainWindow *ui){
 
-        DWORD  CharCount            = 0;
-        WCHAR  DeviceName[MAX_PATH] = L"";
-        DWORD  Error                = ERROR_SUCCESS;
-        HANDLE FindHandle           = INVALID_HANDLE_VALUE;
-        BOOL   Found                = FALSE;
-        size_t Index                = 0;
-        BOOL   Success              = FALSE;
-        WCHAR  VolumeName[MAX_PATH] = L"";
+//        DWORD  CharCount            = 0;
+//        WCHAR  DeviceName[MAX_PATH] = L"";
+//        DWORD  Error                = ERROR_SUCCESS;
+//        HANDLE FindHandle           = INVALID_HANDLE_VALUE;
+//        BOOL   Found                = FALSE;
+//        size_t Index                = 0;
+//        BOOL   Success              = FALSE;
+//        WCHAR  VolumeName[MAX_PATH] = L"";
 
-        //
-        //  Enumerate all volumes in the system.
-        FindHandle = FindFirstVolumeW(VolumeName, ARRAYSIZE(VolumeName));
+//        //
+//        //  Enumerate all volumes in the system.
+//        FindHandle = FindFirstVolumeW(VolumeName, ARRAYSIZE(VolumeName));
 
-        if (FindHandle == INVALID_HANDLE_VALUE)
-        {
-            Error = GetLastError();
-            wprintf(L"FindFirstVolumeW failed with error code %d\n", Error);
-            return;
-        }
+//        if (FindHandle == INVALID_HANDLE_VALUE)
+//        {
+//            Error = GetLastError();
+//            wprintf(L"FindFirstVolumeW failed with error code %d\n", Error);
+//            return;
+//        }
 
-        for (;;)
-        {
-            //
-            //  Skip the \\?\ prefix and remove the trailing backslash.
-            Index = wcslen(VolumeName) - 1;
+//        for (;;)
+//        {
 
-            if (VolumeName[0]     != L'\\' ||
-                VolumeName[1]     != L'\\' ||
-                VolumeName[2]     != L'?'  ||
-                VolumeName[3]     != L'\\' ||
-                VolumeName[Index] != L'\\')
-            {
-                Error = ERROR_BAD_PATHNAME;
-                wprintf(L"FindFirstVolumeW/FindNextVolumeW returned a bad path: %s\n", VolumeName);
-                break;
-            }
+//            Index = wcslen(VolumeName) - 1;
 
-            //
-            //  QueryDosDeviceW does not allow a trailing backslash,
-            //  so temporarily remove it.
-            VolumeName[Index] = L'\0';
+//            if (VolumeName[0]     != L'\\' ||
+//                VolumeName[1]     != L'\\' ||
+//                VolumeName[2]     != L'?'  ||
+//                VolumeName[3]     != L'\\' ||
+//                VolumeName[Index] != L'\\')
+//            {
+//                Error = ERROR_BAD_PATHNAME;
+//                wprintf(L"FindFirstVolumeW/FindNextVolumeW returned a bad path: %s\n", VolumeName);
+//                break;
+//            }
 
-            CharCount = QueryDosDeviceW(&VolumeName[4], DeviceName, ARRAYSIZE(DeviceName));
+//            VolumeName[Index] = L'\0';
 
-            VolumeName[Index] = L'\\';
+//            CharCount = QueryDosDeviceW(&VolumeName[4], DeviceName, ARRAYSIZE(DeviceName));
 
-            if ( CharCount == 0 )
-            {
-                Error = GetLastError();
-                wprintf(L"QueryDosDeviceW failed with error code %d\n", Error);
-                break;
-            }
+//            VolumeName[Index] = L'\\';
 
-            wprintf(L"\nFound a device:\n %s", DeviceName);
+//            if ( CharCount == 0 )
+//            {
+//                Error = GetLastError();
+//                wprintf(L"QueryDosDeviceW failed with error code %d\n", Error);
+//                break;
+//            }
 
-            //ui->textBrowser->setText(L DeviceName);
-            wprintf(L"\nVolume name: %s", VolumeName);
-            wprintf(L"\nPaths:");
-//            DisplayVolumePaths(VolumeName);
-            DWORD  CharCount = MAX_PATH + 1;
-            PWCHAR Names     = NULL;
-            PWCHAR NameIdx   = NULL;
-            BOOL   Success   = FALSE;
+//            wprintf(L"\nFound a device:\n %s", DeviceName);
 
-            for (;;)
-            {
-                //
-                //  Allocate a buffer to hold the paths.
-                Names = (PWCHAR) new BYTE [CharCount * sizeof(WCHAR)];
+//            //ui->textBrowser->setText(L DeviceName);
+//            wprintf(L"\nVolume name: %s", VolumeName);
+//            wprintf(L"\nPaths:");
+////            DisplayVolumePaths(VolumeName);
+//            DWORD  CharCount = MAX_PATH + 1;
+//            PWCHAR Names     = NULL;
+//            PWCHAR NameIdx   = NULL;
+//            BOOL   Success   = FALSE;
 
-                if ( !Names )
-                {
-                    //
-                    //  If memory can't be allocated, return.
-                    return;
-                }
+//            for (;;)
+//            {
+//                //
+//                //  Allocate a buffer to hold the paths.
+//                Names = (PWCHAR) new BYTE [CharCount * sizeof(WCHAR)];
 
-                //
-                //  Obtain all of the paths
-                //  for this volume.
-                Success = GetVolumePathNamesForVolumeNameW(
-                    VolumeName, Names, CharCount, &CharCount
-                    );
+//                if ( !Names )
+//                {
 
-                if ( Success )
-                {
-                    break;
-                }
+//                    return;
+//                }
 
-                if ( GetLastError() != ERROR_MORE_DATA )
-                {
-                    break;
-                }
+//                Success = GetVolumePathNamesForVolumeNameW(
+//                    VolumeName, Names, CharCount, &CharCount
+//                    );
 
-                //
-                //  Try again with the
-                //  new suggested size.
-                delete [] Names;
-                Names = NULL;
-            }
+//                if ( Success )
+//                {
+//                    break;
+//                }
 
-            if ( Success )
-            {
-                //
-                //  Display the various paths.
-                for ( NameIdx = Names;
-                      NameIdx[0] != L'\0';
-                      NameIdx += wcslen(NameIdx) + 1 )
-                {
-                    wprintf(L"  %s", NameIdx);
-                }
-                wprintf(L"\n");
-            }
+//                if ( GetLastError() != ERROR_MORE_DATA )
+//                {
+//                    break;
+//                }
 
-            if ( Names != NULL )
-            {
-                delete [] Names;
-                Names = NULL;
-            }
+//                delete [] Names;
+//                Names = NULL;
+//            }
 
-            //
-            //  Move on to the next volume.
-            Success = FindNextVolumeW(FindHandle, VolumeName, ARRAYSIZE(VolumeName));
+//            if ( Success )
+//            {
+//                //
+//                //  Display the various paths.
+//                for ( NameIdx = Names;
+//                      NameIdx[0] != L'\0';
+//                      NameIdx += wcslen(NameIdx) + 1 )
+//                {
+//                    wprintf(L"  %s", NameIdx);
+//                }
+//                wprintf(L"\n");
+//            }
 
-            if ( !Success )
-            {
-                Error = GetLastError();
+//            if ( Names != NULL )
+//            {
+//                delete [] Names;
+//                Names = NULL;
+//            }
 
-                if (Error != ERROR_NO_MORE_FILES)
-                {
-                    wprintf(L"FindNextVolumeW failed with error code %d\n", Error);
-                    break;
-                }
+//            Success = FindNextVolumeW(FindHandle, VolumeName, ARRAYSIZE(VolumeName));
 
-                //
-                //  Finished iterating
-                //  through all the volumes.
-                Error = ERROR_SUCCESS;
-                break;
-            }
-        }
+//            if ( !Success )
+//            {
+//                Error = GetLastError();
 
-        FindVolumeClose(FindHandle);
-        FindHandle = INVALID_HANDLE_VALUE;
+//                if (Error != ERROR_NO_MORE_FILES)
+//                {
+//                    wprintf(L"FindNextVolumeW failed with error code %d\n", Error);
+//                    break;
+//                }
 
-        return;
-}
+//                Error = ERROR_SUCCESS;
+//                break;
+//            }
+//        }
+
+//        FindVolumeClose(FindHandle);
+//        FindHandle = INVALID_HANDLE_VALUE;
+
+//        return;
+//}
 
 void memoryInfo::get_mem_info(Ui::MainWindow *ui){//+
     MEMORYSTATUSEX statex;
@@ -456,12 +360,7 @@ void memoryInfo::get_mem_info(Ui::MainWindow *ui){//+
     int percent = statex.dwMemoryLoad;
     _itoa(percent,buf,10);
      strcat(buf,"%");
-//    while(statex.dwMemoryLoad[i]!='\0'){
-//        buff[i] = peProcessEntry.szExeFile[i];
-//        //            sprintf(buff[i],"%c",peProcessEntry.szExeFile[i]);
-//        i++;
-//    }
-//    buff[i] = '\0';
+
     ui->mem_perc->setText(buf);
     long int mem_value = statex.ullTotalPhys/1024/1024;
     _itoa(mem_value,buf,10);
@@ -492,8 +391,6 @@ void memoryInfo::get_mem_info(Ui::MainWindow *ui){//+
     ui->label_28->setText(buf);
 }
 
-//void MainWindow::
-
 void osInfo::get_windows_directory(Ui::MainWindow *ui){
     TCHAR path[MAX_PATH];
     GetWindowsDirectory(path,MAX_PATH);
@@ -509,63 +406,50 @@ void osInfo::get_windows_directory(Ui::MainWindow *ui){
 
 void osInfo::get_system_directory(Ui::MainWindow *ui)
 {
-
+    TCHAR path[MAX_PATH];
+    GetSystemDirectory(path,MAX_PATH);
+    char buff[255];
+    int i;
+    for( i = 0;path[i]!='\0';i++){
+        buff[i] = path[i];
+    }
+    buff[i] = '\0';
+    ui->label_32->setText( buff);
 }
 
 void osInfo:: get_os_version_name(Ui::MainWindow *ui){//???
 
+     RTL_OSVERSIONINFOEXW *pk_OsVer = new RTL_OSVERSIONINFOEXW;
+     typedef LONG(WINAPI* tRtlGetVersion)(RTL_OSVERSIONINFOEXW*);
 
-    if(IsWindows10OrGreater()){
-        ui->OS->setText("Windows 10");
-    }
-    if (IsWindows8Point1OrGreater())
-    {
-        ui->OS->setText("Windows 8.1");
-    }
-    if (IsWindows8OrGreater())
-    {
-        ui->OS->setText("Windows 8");
-    }
-    if (IsWindows7OrGreater())
-    {
-        ui->OS->setText("Windows 7");
-    }
-    if (IsWindowsVistaOrGreater())
-    {
-        ui->OS->setText("Windows Vista");
-    }
-    if (IsWindowsXPOrGreater())
-    {
-        ui->OS->setText("Windows XP");
-    }
-    ui->OS->setText("Windows Unknown");
+     memset(pk_OsVer, 0, sizeof(RTL_OSVERSIONINFOEXW));
+     pk_OsVer->dwOSVersionInfoSize = sizeof(RTL_OSVERSIONINFOEXW);
+
+     HMODULE h_NtDll = GetModuleHandleW(L"ntdll.dll");
+     tRtlGetVersion f_RtlGetVersion = (tRtlGetVersion)GetProcAddress(h_NtDll, "RtlGetVersion");
+
+     if (!f_RtlGetVersion)
+      return; // This will never happen (all processes load ntdll.dll)
+
+     LONG Status = f_RtlGetVersion(pk_OsVer);
+     char buf[50];
+     char sm_buf[20];
+    // strcpy(buf,"Windows");
+     _itoa(pk_OsVer->dwMajorVersion,buf,10);
+     _itoa(pk_OsVer->dwMinorVersion,sm_buf,10);
+     strcat(buf,".");
+     strcat(buf,sm_buf);
+     if (Status == 0)
+         ui->OS->setText(buf);
+     // std::cout << "OS version: Windows " << pk_OsVer->dwMajorVersion << "." << pk_OsVer->dwMinorVersion << std::endl;
+     else
+      std::cout << 0;
+
+     delete pk_OsVer;
 }
-//void MainWindow:: full_table()
-//{
-
-//    SYSTEM_INFO sys_Info;
-
-//       GetSystemInfo(&sys_Info);
-
-//      /* unsigned char bytes[sizeof(DWORD)];
-//       DWORD val = -1;
-//       std::memcpy(bytes, &val, sizeof bytes);
-//        for (const auto it : bytes)
-//             std::cout << static_cast<int>(it) << ' ';*/
-//       if(sys_Info.dwProcessorType == 586){
-
-//           ui->listWidget->addItem("Pentium");
-//       }
-//      /* cout << "Your process type : " << sys_Info.dwProcessorType << endl;
-
-//       cout << "Amount of kernel : " << sys_Info.dwNumberOfProcessors << endl;*/
-//       //DWORD str = sys_Info.dwProcessorType;
 
 
-
-//}
-
-void computerInfo::get_computer_name(Ui::MainWindow *ui){
+char* computerInfo::get_computer_name(/*Ui::MainWindow *ui*/){
 
         char buffer[MAX_COMPUTERNAME_LENGTH + 1];
         size_t origsize = strlen(buffer) + 1;
@@ -585,11 +469,14 @@ void computerInfo::get_computer_name(Ui::MainWindow *ui){
             i++;
         }
         buff[i] = '\0';
-        ui->computer_name->setText(buff);
+
+        return buff;
+        //return buff;
+        //ui->computer_name->setText(buff);
 }
 
 
-void userInfo::get_user_name(Ui::MainWindow *ui){
+char* userInfo::get_user_name(){
 //    char UserName[UNLEN + 1];
 //        unsigned long len_UserName = UNLEN + 1;
 //        GetUserNameA (UserName,&len_UserName);
@@ -611,8 +498,11 @@ void userInfo::get_user_name(Ui::MainWindow *ui){
         i++;
     }
     buff[i] = '\0';
-    ui->label_7->setText(buff);
+    return buff;
+    //ui->label_7->setText(buff);
 }
+
+
 
 void processorInfo::get_processor_type(Ui::MainWindow *ui){
     SYSTEM_INFO sys_Info;
@@ -621,7 +511,7 @@ void processorInfo::get_processor_type(Ui::MainWindow *ui){
     char buffer[250] ;
     itoa(amount,buffer,10);
     ui->amount_of_kernels->setText(buffer);
-
+    //sys_Info.dwProcessorType
     int key = sys_Info.wProcessorLevel;
     switch(key){
     case 3:strcpy(buffer,"80386");
@@ -640,51 +530,67 @@ void processorInfo::get_processor_type(Ui::MainWindow *ui){
 
 
     int architecture = sys_Info.wProcessorArchitecture;
-    if(architecture == 0){
-        strcpy(buffer,"x86");
+    switch(architecture){
+    case 0:strcpy(buffer,"x86");break;
+    case 9:strcpy(buffer,"x64 (AMD или Intel)");break;
+    case 5:strcpy(buffer,"ARM");break;
+    case 12:strcpy(buffer,"ARM64");break;
+    case 6:strcpy(buffer,"Intel Itanium-based");break;
     }
+
     //itoa(architecture,buffer,10);
     ui->label_8->setText(buffer);
+}
 
+static float CalculateCPULoad(unsigned long long idleTicks, unsigned long long totalTicks)
+{
+    static unsigned long long _previousTotalTicks = 0;
+    static unsigned long long _previousIdleTicks = 0;
 
+    unsigned long long totalTicksSinceLastTime = totalTicks - _previousTotalTicks;
+    unsigned long long idleTicksSinceLastTime = idleTicks - _previousIdleTicks;
 
-//    const int DelayTime = 500;
-//    DWORD TimerHi,TimerLo;
-//    int PriorityClass,Priority;
-////    var TimerHi : DWORD;
-////         TimerLo : DWORD;
-////         PriorityClass : Integer;
-////         Priority : Integer;
-//      PriorityClass = GetPriorityClass(GetCurrentProcess);
-//      Priority = GetThreadPriority(GetCurrentThread);
-//      SetPriorityClass(GetCurrentProcess, REALTIME_PRIORITY_CLASS);
-//      SetThreadPriority(GetCurrentThread, THREAD_PRIORITY_TIME_CRITICAL);
-//      Sleep(10);
-//      _asm {
-//        DW 310Fh // rdtsc
-//        MOV TimerLo, EAX
-//        MOV TimerHi, EDX
-//      }
-//      Sleep(DelayTime);
-//      _asm {
-//        //DW 310Fh // rdtsc
-//        SUB EAX, TimerLo
-//        SBB EDX, TimerHi
-//        MOV TimerLo, EAX
-//        MOV TimerHi, EDX
-//      }
-//      SetThreadPriority(GetCurrentThread, Priority);
-//      SetPriorityClass(GetCurrentProcess, PriorityClass);
-//      int lol = TimerLo / (1000.0 * DelayTime);
-//     // printf("%d",TimerLo / (1000.0 * DelayTime));
+    float ret = 1.0f - ((totalTicksSinceLastTime > 0) ? ((float)idleTicksSinceLastTime) / totalTicksSinceLastTime : 0);
 
+    _previousTotalTicks = totalTicks;
+    _previousIdleTicks = idleTicks;
+    return ret;
+}
+
+static unsigned long long FileTimeToInt64(const FILETIME & ft) { return (((unsigned long long)(ft.dwHighDateTime)) << 32) | ((unsigned long long)ft.dwLowDateTime); }
+float GetCPULoad()
+{
+    FILETIME idleTime, kernelTime, userTime;
+    return GetSystemTimes(&idleTime, &kernelTime, &userTime) ? CalculateCPULoad(FileTimeToInt64(idleTime), FileTimeToInt64(kernelTime) + FileTimeToInt64(userTime)) : -1.0f;
+}
+
+void processorInfo::get_processor_load(Ui::MainWindow *ui)
+{
+    SYSTEMTIME sysTime;
+        //Retrieves data so that we have a way to Get it to output when using the pointers
+    GetSystemTime(&sysTime);
+    float res = GetCPULoad()*100;
+//    int counter = 0;
+//    while (counter < 5)
+//    {
+//            //Timestamp + Memory Info, and eventually CPU Load percentage
+//            //myfile << sysTime.wHour << "." << sysTime.wMinute << "." << sysTime.wSecond << ", " << GetCPULoad() * 100 << "%, " << memStat.dwMemoryLoad << "%, " << memStat.ullTotalPhys / MB << ", " << memStat.ullAvailPhys / MB << ", " << memStat.ullTotalPageFile / MB << ", " << memStat.ullAvailPageFile / MB << ", " << memStat.ullTotalVirtual / MB << ", " << memStat.ullAvailVirtual / MB << ", " << memStat.ullAvailExtendedVirtual / MB << "\n";
+//            //250 millisecond sleep delay
+//            Sleep(200);
+//            cout << GetCPULoad() * 100 << "%, " << endl;
+//            Sleep(200);
+//            counter = counter + 1;
+//    }
+    ui->progressBar->setValue(res);
 }
 
 void MainWindow::update()
 {
     HANDLE CONST hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
     PrintProcessList(hStdOut);
+     //mem_info->get_mem_info(ui);
     mem_info->get_mem_info(ui);
+    procInfo->get_processor_load(ui);
     //get_information();
 }
 //void MainWindow::get_process_list()
@@ -708,9 +614,6 @@ void MainWindow::PrintProcessList(HANDLE CONST hStdOut)
 
     Process32First(hSnapshot, &peProcessEntry);
     do {
-//        int wchars_num =  MultiByteToWideChar( CP_UTF8 , 0 , x.c_str() , -1, NULL , 0 );
-//        wchar_t* wstr = new wchar_t[wchars_num];
-//        MultiByteToWideChar( CP_UTF8 , 0 , x.c_str() , -1, wstr , wchars_num );
         int i=0;
         while(peProcessEntry.szExeFile[i]!='\0'){
             buff[i] = peProcessEntry.szExeFile[i];
